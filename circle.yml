@@ -1,7 +1,7 @@
 version: 2
 jobs:
   install_and_build:
-    working_directory: /go/src/github.com/vidsy/creators-api
+    working_directory: /go/src/github.com/stevenjack/neo-scan-db-migrator
     docker:
       - image: vidsyhq/go-builder:latest
     steps:
@@ -15,7 +15,7 @@ jobs:
             - vendor
             - creators-api
   build_image:
-    working_directory: /go/src/github.com/vidsy/creators-api
+    working_directory: /go/src/github.com/stevenjack/neo-scan-db-migrator
     docker:
       - image: buildpack-deps:trusty
     steps:
@@ -34,7 +34,7 @@ jobs:
             mv /tmp/docker/* /usr/bin
       - run:  make build-image
   test:
-    working_directory: /go/src/github.com/vidsy/creators-api
+    working_directory: /go/src/github.com/stevenjack/neo-scan-db-migrator
     docker:
       - image: vidsyhq/go-builder:latest
     steps:
@@ -50,7 +50,7 @@ jobs:
       - checkout
       - run: make check-version
   deploy:
-    working_directory: /go/src/github.com/vidsy/creators-api
+    working_directory: /go/src/github.com/stevenjack/neo-scan-db-migrator
     docker:
       - image: buildpack-deps:trusty
     steps:
