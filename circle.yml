@@ -1,0 +1,96 @@
+version: 2
+jobs:
+  install_and_build:
+    working_directory: /go/src/github.com/stevenjack/neo-scan-db-migrator
+    docker:
+      - image: vidsyhq/go-builder:latest
+    steps:
+      - checkout
+      - restore_cache:
+          key: dependency-cache-{{ .Revision }}
+      - run: /scripts/build.sh
+      - save_cache:
+          key: dependency-cache-{{ .Revision }}
+          paths:
+            - vendor
+            - neo-scan-db-migrator
+  build_image:
+    working_directory: /go/src/github.com/stevenjack/neo-scan-db-migrator
+    docker:
+      - image: buildpack-deps:trusty
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - dependency-cache-{{ .Revision }}
+      - setup_remote_docker
+      - run:
+          name: Install Docker client
+          command: |
+            set -x
+            VER="17.03.0-ce"
+            curl -L -o /tmp/docker-$VER.tgz https://get.docker.com/builds/Linux/x86_64/docker-$VER.tgz
+            tar -xz -C /tmp -f /tmp/docker-$VER.tgz
+            mv /tmp/docker/* /usr/bin
+      - run:  make build-image
+  check_version:
+    working_directory: ~/neo-scan-db-migrator
+    docker:
+      - image: buildpack-deps:trusty
+    steps:
+      - checkout
+      - run: make check-version
+  deploy:
+    working_directory: /go/src/github.com/stevenjack/neo-scan-db-migrator
+    docker:
+      - image: buildpack-deps:trusty
+    steps:
+      - checkout
+      - restore_cache:
+          key: dependency-cache-{{ .Revision }}
+      - setup_remote_docker
+      - run:
+          name: Install Docker client
+          command: |
+            set -x
+            VER="17.03.0-ce"
+            curl -L -o /tmp/docker-$VER.tgz https://get.docker.com/builds/Linux/x86_64/docker-$VER.tgz
+            tar -xz -C /tmp -f /tmp/docker-$VER.tgz
+            mv /tmp/docker/* /usr/bin
+      - run: make build-image
+      - deploy:
+          name: deploy
+          command: make push-to-registry
+
+workflows:
+  version: 2
+  build_test_deploy:
+    jobs:
+      - install_and_build:
+          filters:
+            tags:
+              only: /[0-9]+\.[0-9]+\.[0-9]+/
+            branches:
+              ignore: master
+      - build_image:
+          requires:
+            - install_and_build
+          filters:
+            tags:
+              only: /[0-9]+\.[0-9]+\.[0-9]+/
+            branches:
+              ignore: master
+      - check_version:
+          filters:
+            branches:
+              ignore: master
+      - deploy:
+          requires:
+            - build_image
+            - check_version
+          filters:
+            tags:
+              only:
+                - /[0-9]+\.[0-9]+\.[0-9]+/
+            branches:
+              ignore: /.*/
