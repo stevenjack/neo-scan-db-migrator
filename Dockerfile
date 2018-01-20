@@ -1,9 +1,9 @@
-FROM stevenjack/neo-scan:latest
+FROM smaj/neo-scan:latest
 
 ARG VERSION
 
 ENV POSTGRESS_HOST "postgress:5432"
-ENV SUCCESS_COMMANDS "mix ecto.drop && mix ecto.create && mix ecto.migrate"
+ENV SUCCESS_COMMANDS "cd /data && mix ecto.drop && mix ecto.create && mix ecto.migrate"
 
 LABEL authors="stevenjack"
 LABEL version=${VERSION}
