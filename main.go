@@ -41,7 +41,7 @@ func main() {
 		output, err := cmd.Output()
 
 		if err != nil {
-			log.Printf("Command finished with error: %s", err)
+			log.Printf("Command finished with error: %s \n%s", err, output)
 		} else {
 			log.Printf("Command successfully finished:\n%s", output)
 		}
