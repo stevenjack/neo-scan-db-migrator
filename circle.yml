@@ -13,7 +13,7 @@ jobs:
           key: dependency-cache-{{ .Revision }}
           paths:
             - vendor
-            - creators-api
+            - neo-scan-db-migrator
   build_image:
     working_directory: /go/src/github.com/stevenjack/neo-scan-db-migrator
     docker:
@@ -43,7 +43,7 @@ jobs:
           key: dependency-cache-{{ .Revision }}
       - run: make test
   check_version:
-    working_directory: ~/creators-api
+    working_directory: ~/neo-scan-db-migrator
     docker:
       - image: buildpack-deps:trusty
     steps:
