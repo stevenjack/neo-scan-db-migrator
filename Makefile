@@ -2,6 +2,7 @@ BRANCH ?= "master"
 GO_BUILDER_IMAGE ?= "vidsyhq/go-builder"
 PATH_BASE ?= "/go/src/github.com/stevenjack"
 REPONAME ?= "neo-scan-db-migrator"
+ORG ?= "smaj"
 VERSION ?= $(shell cat ./VERSION)
 
 build-binary:
@@ -11,7 +12,7 @@ build-binary:
 	${GO_BUILDER_IMAGE}
 
 build-image:
-	@docker build -t vidsyhq/${REPONAME} --build-arg VERSION=${VERSION} .
+	@docker build -t ${ORG}/${REPONAME} --build-arg VERSION=${VERSION} .
 
 check-version:
 	@echo "=> Checking if VERSION exists as Git tag..."
@@ -29,9 +30,9 @@ push-tag:
 
 push-to-registry:
 	@docker login -e ${DOCKER_EMAIL} -u ${DOCKER_USER} -p ${DOCKER_PASS}
-	@docker tag vidsyhq/${REPONAME}:latest vidsyhq/${REPONAME}:${CIRCLE_TAG}
-	@docker push vidsyhq/${REPONAME}:${CIRCLE_TAG}
-	@docker push vidsyhq/${REPONAME}
+	@docker tag ${ORG}/${REPONAME}:latest ${ORG}/${REPONAME}:${CIRCLE_TAG}
+	@docker push ${ORG}/${REPONAME}:${CIRCLE_TAG}
+	@docker push ${ORG}/${REPONAME}
 
 run:
 	@go build -i -ldflags "-X main.Version=${VERSION}-dev -X main.BuildTime=17/01/2017T14:12:35+0000"
