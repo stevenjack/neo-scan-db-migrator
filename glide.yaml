@@ -1,0 +1,4 @@
+package: github.com/stevenjack/neo-scan-db-migrator
+import:
+- package: github.com/vidsy/backoff
+  version: ^1.0.0

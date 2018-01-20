@@ -1,0 +1,6 @@
+hash: bedc350f14d568f76dff5e23b6ec1eb7210e2b3eac75da540267a2f287c9b139
+updated: 2018-01-20T09:19:50.370233Z
+imports:
+- name: github.com/vidsy/backoff
+  version: 715d207c270e1f65b2fa8f9997463555123bb46a
+testImports: []
